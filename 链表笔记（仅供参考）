@@ -1,0 +1,225 @@
+#include<stdio.h>
+#include<stdlib.h>
+typedef int ElemType;
+
+//单链表
+typedef struct node  //除了data 还有一个node （NULL）存了俩东西 
+{
+    ElemType data;
+    struct node *next;
+}Node;
+
+//前插法
+int insertHead(Node*L, ElemType e)
+{
+    Node*p = (Node*)malloc(sizeof(Node)); //创建新节点
+    p->data = e; //新节点赋值
+    p->next = L->next; //新节点指向后一个节点
+    L->next = p; //头节点指向新节点
+}
+
+Node* insertTail(Node *tail, ElemType e)
+{
+    Node *p = (Node*)malloc(sizeof(Node)); //创建新节点
+    p->data = e;
+    tail->next = p; //当前的尾节点指向新节点
+    p->next = NULL; //新节点的node变为NULL
+    return p;
+}
+
+//指定位置插入数据
+int insertNode(Node *L, int pos, ElemType e)
+{
+    Node*p = L;
+    int i = 0;
+    while (i < pos-1)
+    {
+        p = p->next;
+        i++;
+        if (p ==NULL)
+        {
+            return 0;
+        }
+    }
+    
+    Node *q = (Node*)malloc(sizeof(Node)); //创建新节点
+    q->data = e;
+    q->next = p->next;
+    p->next = q;
+    return 1;
+}
+
+//删除指定位置的节点
+
+
+//查找倒数第k个节点 快慢指针法
+int findNodeFS(Node*L, int k)
+{
+    Node*fast = L->next;  //快慢指针指向首节点
+    Node*slow = L->next;
+    for (int i = 0; i < k; i++)
+    {
+        fast = fast->next;  //快指针先走k步
+    }
+    
+    while(fast !=NULL)
+    {
+        fast = fast->next;
+        slow = slow->next;
+    }
+
+    printf;
+}
+
+//寻找相同后缀的两个链表的起始位置 快慢指针法
+Node* findIntersectionNode(Node*headA, Node*headB)
+{   
+    Node*p = headA;
+    int lenA = 0;
+    int lenB = 0;
+
+    while (p != NULL)
+    {
+        p = p->next;
+        lenA++;
+    }
+    
+    Node*p = headB;
+    while (p != NULL)
+    {
+        p = p->next;
+        lenB++;
+    }
+    //结束之后存储了AB链表的长度了
+
+    Node*fast;
+    Node*slow;
+    int step;
+    if (lenA>lenB)
+    {
+        step = lenA - lenB;
+        fast = headA;
+        slow = headB;
+    }
+    else
+    {
+        step = lenB - lenA;
+        fast = headB;
+        slow = headA;
+    }
+    for (int i = 0; i < step; i++)
+    {
+        fast = fast->next;
+    }
+    while (fast != slow)
+    {
+        fast = fast->next;
+        slow = slow->next;
+    }
+    return fast;
+
+}
+
+//空间换时间 删除绝对值相同的节点
+void removeNode(Node*L, int n)
+{
+    Node *p = L; //头节点指针给p
+    int index; //作为数组下标使用  
+    int *q = (int*)malloc(sizeof(int)*(n+1));  //长度加一
+
+    //遍历数组，初始化为0 用指针操作数组
+    for (int i = 0; i < n+1; i++)
+    {
+        *(q + i) = 0; //对指针进行加法 如果+1 对指针可能加了4/8 根据数据结构而定
+    }
+    
+    while (p->next != NULL)
+    {
+        index = abs(p->next->data); //abs（）函数 获取传入参数的绝对值
+        if (*(q+index) == 0) //如果等于零 说明没访问过 则改成一
+        {
+            *(q +index) = 1; //变为一
+            p = p->next;
+        }
+        else
+        {
+            Node*temp = p->next;  //声明一个中介节点
+            p->next = temp->next;  //中介节点的指针是p指针
+            free(temp);  //释放中介节点 即释放重复的那个节点
+        }
+    }
+    free(q);  //释放占用的空间（数组）
+}
+
+
+//反转链表
+Node*reverseList(Node*head)    //有点像基因的转录                   
+{
+    Node*first = NULL;
+    Node*second = head->next;
+    Node*third ;
+    while(second !=NULL)
+    {
+        third = second->next;
+        second->next = first; //反转操作 让second指针指向第一个
+        first = second;  //往后移的操作
+        second = third;
+    }
+    Node*hd = initList();  //创建新的节点
+    hd->next = first; //让新节点的指针指向第一个（反转后）作为新的头节点
+
+    return hd;
+}
+
+//删除中间节点
+int delMiddleNode(Node*head)
+{
+    Node*fast = head->next;
+    Node*slow = head;
+
+    while (fast != NULL && fast->next != NULL)
+    {
+        fast = fast->next->next;  //一个两步
+        slow = slow->next;  //一个一步
+    }
+
+    //删除的操作
+    Node*q = slow->next;  //要删除的是q 定义一下
+    slow->next = q->next;  //直接让slow的指针指向q的下一个指向的 （让前一个和后一个连上）
+    free(q);  //删掉q
+    return 1;
+}
+
+
+//[2019]考研 链表的重排
+void reorderList(Node*head)
+{
+    Node*fast = head->next;
+    Node*slow = head;
+    while (fast != NULL && fast->next != NULL)
+    {
+        fast = fast->next->next;  //一个两步
+        slow = slow->next;  //一个一步
+    }
+
+    Node*first = NULL;
+    Node*second = slow->next;
+    slow->next = NULL; //让前一个的指针变为空 即从中间拆开链表
+    Node*third = NULL;
+
+    while (third !=NULL)
+    {
+        third = second->next;
+        second->next = first;
+        first = second;
+        second = third;
+    }
+    
+    Node*p1 = head->next;
+    Node*q1 = first;  //first指向的是砍断后的第一个节点
+    Node*p2,*q2;
+}
+
+
+//循环链表
+
