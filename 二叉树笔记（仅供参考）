@@ -64,13 +64,3 @@ typedef ThreadNode*ThreadTree;  //声明指针
 char str[] = "";
 int idx = 0;  //当下标用
 
-
-//创建树
-void createTree(ThreadTree*T)
-{
-    
-
-}
-
-//层序遍历
-
